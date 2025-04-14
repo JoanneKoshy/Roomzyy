@@ -1,0 +1,187 @@
+/* src/styles/RoomPage.css */
+
+body {
+    background-color: #181818;
+    color: #e0e0e0;
+    font-family: sans-serif;
+    margin: 0;
+    padding: 0;
+  }
+  
+  .room-page-container {
+    display: flex;
+    height: 100vh;
+    padding: 20px;
+    gap: 20px; /* Space between the main sections */
+  }
+  
+  /* Left - Search */
+  .search-container {
+    flex: 0 0 25%; /* Takes up 25% of the width */
+    padding: 20px;
+    background-color: #212121;
+    border-radius: 8px;
+    overflow-y: auto; /* For scrollable search results */
+  }
+  
+  .search-container .section-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+    color: #e0e0e0;
+  }
+  
+  .search-bar {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 1rem;
+  }
+  
+  .search-input {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #333;
+    border-radius: 5px;
+    background-color: #333;
+    color: #e0e0e0;
+  }
+  
+  .search-button {
+    padding: 10px 15px;
+    background-color: #1db954;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+  }
+  
+  .search-button:hover {
+    background-color: #1ed760;
+  }
+  
+  .search-results {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  .video-item {
+    padding: 12px;
+    background-color: #333;
+    margin-bottom: 0.5rem;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+  
+  .video-item:hover {
+    background-color: #555;
+  }
+  
+  /* Middle - Video */
+  .video-container {
+    flex: 1; /* Takes up the remaining space */
+    padding: 20px;
+    background-color: #212121;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .video-container .section-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+    color: #e0e0e0;
+    text-align: center;
+  }
+  
+  .video-player {
+    flex-grow: 1;
+    background-color: #000;
+    border-radius: 5px;
+    overflow: hidden; /* To contain the iframe within the rounded corners */
+  }
+  
+  .video-player iframe {
+    width: 100%;
+    height: 100%;
+  }
+  
+  .no-video {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    color: #777;
+  }
+  
+  .video-title {
+    margin-top: 1rem;
+    font-size: 1.2rem;
+    color: #e0e0e0;
+    text-align: center;
+  }
+  
+  /* src/styles/RoomPage.css */
+
+/* ... other styles ... */
+
+/* Right - Chat */
+.chat-container {
+    flex: 0 0 30%; /* Takes up 30% of the width */
+    padding: 20px;
+    background-color: #212121;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .chat-container .section-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+    color: #e0e0e0;
+  }
+  
+  .chat-container > div { /* Assuming your Chat component has a root div */
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+  
+  .chat-container .messages-container {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding-bottom: 10px;
+  }
+  
+  .chat-container .message-input {
+    display: flex;
+    gap: 10px;
+    padding-top: 15px;
+    border-top: 1px solid #333;
+  }
+  
+  .chat-container .message-input-field {
+    flex-grow: 1;
+    padding: 10px;
+    border: 1px solid #333;
+    border-radius: 5px;
+    background-color: #333; /* Keep the dark background */
+    color: #e0e0e0; /* Light text for better readability */
+  }
+  
+  .chat-container .send-button {
+    padding: 10px 15px;
+    background-color: #1db954; /* Same green as search button */
+    color: white; /* White text like search button */
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+  }
+  
+  .chat-container .send-button:hover {
+    background-color: #1ed760; /* Same hover effect as search button */
+  }

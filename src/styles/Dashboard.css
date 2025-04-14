@@ -1,0 +1,85 @@
+/* Dashboard.css */
+.dashboard-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh; /* Use min-height to ensure it covers the whole viewport */
+    background-color: #000; /* Solid black background */
+    padding: 2rem; /* Add some padding around the content */
+    color: #fff; /* White text for contrast */
+    text-align: center; /* Center the text */
+  }
+  
+  .dashboard-container h1 {
+    font-size: 2.5rem; /* Slightly larger heading */
+    margin-bottom: 1.5rem; /* Adjust margin */
+    font-weight: bold; /* Make the welcome text stand out */
+  }
+  
+  .dashboard-buttons {
+    display: flex;
+    gap: 1rem; /* Adjust the gap between buttons */
+  }
+  
+  .dashboard-buttons button {
+    padding: 1rem 2rem; /* Increase padding for better touch targets */
+    border: none;
+    border-radius: 25px; /* More rounded buttons */
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .dashboard-buttons button:first-child {
+    background-color: #1db954; /* Spotify green for "New Room" */
+    color: #fff;
+  }
+  
+  .dashboard-buttons button:first-child:hover {
+    background-color: #1ed760;
+  }
+  
+  .dashboard-buttons button:last-child {
+    background-color: transparent; /* Transparent background for "Join" */
+    color: #fff;
+    border: 1px solid #fff; /* White border */
+  }
+  
+  .dashboard-buttons button:last-child:hover {
+    background-color: rgba(255, 255, 255, 0.1); /* Slightly lighter on hover */
+  }
+  .room-popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+  }
+  
+  .room-popup-content {
+    background: #fff;
+    padding: 2rem;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  }
+  
+  .room-code-display {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #1a73e8;
+    margin: 1rem 0;
+  }
+  
+  .room-popup-note {
+    margin-top: 1rem;
+    font-size: 0.9rem;
+    color: #555;
+  }
+  

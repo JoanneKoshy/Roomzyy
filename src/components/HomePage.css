@@ -1,0 +1,56 @@
+.homepage {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background-color: #000000;
+    text-align: center;
+    padding: 1rem;
+    font-family: 'Segoe UI', sans-serif;
+  }
+  
+  .homepage h1 {
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin-bottom: 1.5rem;
+    color: #dde0e6;
+  }
+  
+  .homepage p {
+    font-size: 1.125rem;
+    margin-bottom: 2.5rem;
+    color: #dde0e6;
+  }
+  
+  .homepage .button-container {
+    display: flex;
+    gap: 1rem;
+  }
+  
+  .homepage button {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 999px;
+    color: rgb(8, 8, 8);
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .homepage .signup-button {
+    background-color: #53b22e;
+  }
+  
+  .homepage .signup-button:hover {
+    background-color: #2563eb;
+  }
+  
+  .homepage .login-button {
+    background-color: #10b981;
+  }
+  
+  .homepage .login-button:hover {
+    background-color: #059669;
+  }
+  
