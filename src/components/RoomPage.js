@@ -84,9 +84,9 @@ function RoomPage({ user }) {
 
   const togglePlayPause = () => {
     if (isPlaying) {
-      socket.emit('pause', roomId);
+      socket.emit('pause', roomId); // Send pause signal to server
     } else {
-      socket.emit('play', roomId);
+      socket.emit('play', roomId); // Send play signal to server
     }
     setIsPlaying(!isPlaying);
   };
