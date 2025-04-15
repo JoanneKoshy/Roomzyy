@@ -22,7 +22,10 @@ function RoomPage({ user }) {
 
     socket.on('playVideo', ({ video }) => {
       setCurrentVideo(video);
-      videoRef.current.contentWindow?.postMessage(`{"event":"command","func":"loadVideoById","args":["${video.id.videoId}"]}`, '*');
+      videoRef.current.contentWindow?.postMessage(
+        `{"event":"command","func":"loadVideoById","args":["${video.id.videoId}"]}`,
+        '*'
+      );
     });
 
     socket.on('play', () => {
@@ -37,7 +40,10 @@ function RoomPage({ user }) {
 
     socket.on('volumeChange', (newVolume) => {
       setVolume(newVolume);
-      videoRef.current.contentWindow?.postMessage(`{"event":"command","func":"setVolume","args":[${newVolume * 100}]}`, '*');
+      videoRef.current.contentWindow?.postMessage(
+        `{"event":"command","func":"setVolume","args":[${newVolume * 100}]}`,
+        '*'
+      );
     });
 
     socket.on('syncState', ({ video, isPlaying, volume }) => {
@@ -45,8 +51,14 @@ function RoomPage({ user }) {
       setIsPlaying(isPlaying);
       setVolume(volume);
       if (videoRef.current && video) {
-        videoRef.current.contentWindow?.postMessage(`{"event":"command","func":"${isPlaying ? 'playVideo' : 'pauseVideo'}","args":""}`, '*');
-        videoRef.current.contentWindow?.postMessage(`{"event":"command","func":"setVolume","args":[${volume * 100}]}`, '*');
+        videoRef.current.contentWindow?.postMessage(
+          `{"event":"command","func":"${isPlaying ? 'playVideo' : 'pauseVideo'}","args":""}`,
+          '*'
+        );
+        videoRef.current.contentWindow?.postMessage(
+          `{"event":"command","func":"setVolume","args":[${volume * 100}]}`,
+          '*'
+        );
       }
     });
 
@@ -84,9 +96,9 @@ function RoomPage({ user }) {
 
   const togglePlayPause = () => {
     if (isPlaying) {
-      socket.emit('pause', { roomId }); // ✅ FIXED
+      socket.emit('pause', { roomId }); // Send pause signal to server
     } else {
-      socket.emit('play', { roomId }); // ✅ FIXED
+      socket.emit('play', { roomId }); // Send play signal to server
     }
     setIsPlaying(!isPlaying);
   };
