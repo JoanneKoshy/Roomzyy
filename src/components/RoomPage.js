@@ -1,4 +1,3 @@
-// src/components/RoomPage.js
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import { searchYouTube } from '../youtube';
@@ -23,21 +22,22 @@ function RoomPage({ user }) {
 
     socket.on('playVideo', ({ video }) => {
       setCurrentVideo(video);
+      videoRef.current.contentWindow?.postMessage(`{"event":"command","func":"loadVideoById","args":["${video.id.videoId}"]}`, '*');
     });
 
     socket.on('play', () => {
-      videoRef.current?.contentWindow?.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+      videoRef.current.contentWindow?.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
       setIsPlaying(true);
     });
 
     socket.on('pause', () => {
-      videoRef.current?.contentWindow?.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+      videoRef.current.contentWindow?.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
       setIsPlaying(false);
     });
 
     socket.on('volumeChange', (newVolume) => {
       setVolume(newVolume);
-      videoRef.current?.contentWindow?.postMessage(`{"event":"command","func":"setVolume","args":[${newVolume * 100}]}`, '*');
+      videoRef.current.contentWindow?.postMessage(`{"event":"command","func":"setVolume","args":[${newVolume * 100}]}`, '*');
     });
 
     socket.on('syncState', ({ video, isPlaying, volume }) => {
@@ -99,6 +99,7 @@ function RoomPage({ user }) {
 
   return (
     <div className="room-page-container">
+      {/* Left - Search */}
       <div className="search-container">
         <h2 className="section-title">Search Song</h2>
         <div className="search-bar">
@@ -127,6 +128,7 @@ function RoomPage({ user }) {
         </ul>
       </div>
 
+      {/* Middle - Video */}
       <div className="video-container">
         <h2 className="section-title">Now Playing!</h2>
         <div className="video-player">
@@ -168,6 +170,7 @@ function RoomPage({ user }) {
         )}
       </div>
 
+      {/* Right - Chat */}
       <div className="chat-container">
         <h2 className="section-title">Chat</h2>
         <Chat roomId={roomId} user={user} />
