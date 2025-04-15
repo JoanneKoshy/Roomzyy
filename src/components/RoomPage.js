@@ -7,6 +7,25 @@ import { io } from 'socket.io-client';
 
 const socket = io('https://roomzy-socket-server.onrender.com');
 
+let isYouTubeAPILoaded = false;
+
+function loadYouTubeAPI(onReady) {
+  if (isYouTubeAPILoaded) {
+    onReady();
+    return;
+  }
+
+  const tag = document.createElement('script');
+  tag.src = 'https://www.youtube.com/iframe_api';
+  const firstScriptTag = document.getElementsByTagName('script')[0];
+  firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+  window.onYouTubeIframeAPIReady = () => {
+    isYouTubeAPILoaded = true;
+    onReady();
+  };
+}
+
 function RoomPage({ user }) {
   const { roomId } = useParams();
   const [searchTerm, setSearchTerm] = useState('');
@@ -14,39 +33,72 @@ function RoomPage({ user }) {
   const [currentVideo, setCurrentVideo] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [volume, setVolume] = useState(1);
-  const videoRef = useRef(null);
+  const playerRef = useRef(null);
+  const playerContainerRef = useRef(null);
 
   useEffect(() => {
+    loadYouTubeAPI(() => {
+      if (!playerRef.current && playerContainerRef.current) {
+        playerRef.current = new window.YT.Player(playerContainerRef.current, {
+          height: '360',
+          width: '640',
+          videoId: '',
+          playerVars: {
+            autoplay: 1,
+            controls: 1,
+            enablejsapi: 1,
+            origin: window.location.origin,
+          },
+          events: {
+            onReady: (event) => {
+              event.target.setVolume(volume * 100);
+            },
+            onStateChange: (event) => {
+              const state = event.data;
+              if (state === window.YT.PlayerState.PLAYING) {
+                socket.emit('play', { roomId });
+                setIsPlaying(true);
+              } else if (state === window.YT.PlayerState.PAUSED) {
+                socket.emit('pause', { roomId });
+                setIsPlaying(false);
+              }
+            },
+          },
+        });
+      }
+    });
+
     socket.emit('joinRoom', { roomId, user });
     socket.emit('syncRequest', { roomId });
 
     socket.on('playVideo', ({ video }) => {
       setCurrentVideo(video);
-      videoRef.current.contentWindow?.postMessage(`{"event":"command","func":"loadVideoById","args":["${video.id.videoId}"]}`, '*');
+      playerRef.current?.loadVideoById(video.id.videoId);
     });
 
     socket.on('play', () => {
-      videoRef.current.contentWindow?.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+      playerRef.current?.playVideo();
       setIsPlaying(true);
     });
 
     socket.on('pause', () => {
-      videoRef.current.contentWindow?.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+      playerRef.current?.pauseVideo();
       setIsPlaying(false);
     });
 
     socket.on('volumeChange', (newVolume) => {
       setVolume(newVolume);
-      videoRef.current.contentWindow?.postMessage(`{"event":"command","func":"setVolume","args":[${newVolume * 100}]}`, '*');
+      playerRef.current?.setVolume(newVolume * 100);
     });
 
     socket.on('syncState', ({ video, isPlaying, volume }) => {
       setCurrentVideo(video);
       setIsPlaying(isPlaying);
       setVolume(volume);
-      if (videoRef.current && video) {
-        videoRef.current.contentWindow?.postMessage(`{"event":"command","func":"${isPlaying ? 'playVideo' : 'pauseVideo'}","args":""}`, '*');
-        videoRef.current.contentWindow?.postMessage(`{"event":"command","func":"setVolume","args":[${volume * 100}]}`, '*');
+      if (video) {
+        playerRef.current?.loadVideoById(video.id.videoId);
+        playerRef.current?.setVolume(volume * 100);
+        isPlaying ? playerRef.current?.playVideo() : playerRef.current?.pauseVideo();
       }
     });
 
@@ -80,13 +132,16 @@ function RoomPage({ user }) {
   const handlePlayVideo = (video) => {
     setCurrentVideo(video);
     socket.emit('playVideo', { roomId, video });
+    playerRef.current?.loadVideoById(video.id.videoId);
   };
 
   const togglePlayPause = () => {
     if (isPlaying) {
-      socket.emit('pause', { roomId }); // ✅ FIXED
+      playerRef.current?.pauseVideo();
+      socket.emit('pause', { roomId });
     } else {
-      socket.emit('play', { roomId }); // ✅ FIXED
+      playerRef.current?.playVideo();
+      socket.emit('play', { roomId });
     }
     setIsPlaying(!isPlaying);
   };
@@ -94,6 +149,7 @@ function RoomPage({ user }) {
   const handleVolumeChange = (e) => {
     const newVolume = parseFloat(e.target.value);
     setVolume(newVolume);
+    playerRef.current?.setVolume(newVolume * 100);
     socket.emit('volumeChange', { roomId, volume: newVolume });
   };
 
@@ -132,42 +188,25 @@ function RoomPage({ user }) {
       <div className="video-container">
         <h2 className="section-title">Now Playing!</h2>
         <div className="video-player">
-          {currentVideo ? (
-            <>
-              <iframe
-                ref={videoRef}
-                width="100%"
-                height="100%"
-                src={`https://www.youtube.com/embed/${currentVideo.id.videoId}?autoplay=1&enablejsapi=1&origin=${window.location.origin}`}
-                title="YouTube video player"
-                frameBorder="0"
-                allow="autoplay; encrypted-media"
-                allowFullScreen
-              ></iframe>
-              <div className="controls">
-                <button onClick={togglePlayPause} className="play-pause-button">
-                  {isPlaying ? 'Pause' : 'Play'}
-                </button>
-                <input
-                  type="range"
-                  min="0"
-                  max="1"
-                  step="0.01"
-                  value={volume}
-                  onChange={handleVolumeChange}
-                  className="volume-slider"
-                />
-              </div>
-            </>
-          ) : (
-            <div className="no-video">
-              <p>Select a video to play</p>
-            </div>
+          <div ref={playerContainerRef} id="yt-player" />
+          <div className="controls">
+            <button onClick={togglePlayPause} className="play-pause-button">
+              {isPlaying ? 'Pause' : 'Play'}
+            </button>
+            <input
+              type="range"
+              min="0"
+              max="1"
+              step="0.01"
+              value={volume}
+              onChange={handleVolumeChange}
+              className="volume-slider"
+            />
+          </div>
+          {currentVideo && (
+            <p className="video-title">{currentVideo.snippet.title}</p>
           )}
         </div>
-        {currentVideo && (
-          <p className="video-title">{currentVideo.snippet.title}</p>
-        )}
       </div>
 
       {/* Right - Chat */}
